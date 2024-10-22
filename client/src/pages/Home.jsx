@@ -48,7 +48,6 @@ export default function Home() {
         );
         setPlayers(response.data.players);
         setTotalPages(response.data.totalPages);
-        console.log(response);
       } catch (error) {
         console.error(error);
       }
@@ -68,8 +67,6 @@ export default function Home() {
       setCurrentPage((prevPage) => prevPage - 1);
     }
   };
-
-  console.log("team ", teamPlayers);
 
   return (
     <>
