@@ -1,10 +1,8 @@
 import express from "express";
-import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import playerRoutes from "./routes/player.route.js";
 import teamRoutes from "./routes/team.route.js";
-import Player from "./models/player.model.js";
 import connectDB from "./db.js";
 
 dotenv.config();

@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import PlayerCard from "../components/PlayerCard";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 export default function Home() {
-  const BASE_URL = "http://localhost:8000/api";
   const [players, setPlayers] = useState([]);
   const [teamPlayers, setTeamPlayers] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
@@ -13,7 +12,6 @@ export default function Home() {
   const [teamName, setTeamName] = useState("");
   const limit = 21;
   const navigate = useNavigate();
-
   const createTeam = async () => {
     const playerIds = Object.keys(teamPlayers);
     if (playerIds.length < 11) {
@@ -27,10 +25,13 @@ export default function Home() {
     }
 
     try {
-      const response = await axios.post(`${BASE_URL}/team/create`, {
-        teamName,
-        playerIds,
-      });
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/team/create`,
+        {
+          teamName,
+          playerIds,
+        }
+      );
       toast.success(response.data.message);
       setTeamPlayers({});
     } catch (error) {
@@ -43,7 +44,7 @@ export default function Home() {
     const fetchPlayers = async () => {
       try {
         const response = await axios.get(
-          `${BASE_URL}/player?limit=${limit}&page=${currentPage}`
+          `${process.env.REACT_APP_API_URL}/player?limit=${limit}&page=${currentPage}`
         );
         setPlayers(response.data.players);
         setTotalPages(response.data.totalPages);

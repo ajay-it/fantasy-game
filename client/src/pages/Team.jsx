@@ -1,10 +1,9 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { toast } from "react-toastify";
 import PlayerCard from "../components/PlayerCard";
 
 export default function Team() {
-  const BASE_URL = "http://localhost:8000/api";
   const [teamId, setTeamId] = useState("");
   const [team, setTeam] = useState({});
 
@@ -14,7 +13,9 @@ export default function Team() {
       return;
     }
     try {
-      const res = await axios.get(`${BASE_URL}/team/get/${teamId}`);
+      const res = await axios.get(
+        `${process.env.REACT_APP_API_URL}/team/get/${teamId}`
+      );
       setTeam(res.data);
     } catch (error) {
       if (error.status == 404) {
@@ -26,12 +27,19 @@ export default function Team() {
     }
   };
 
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      searchTeam();
+    }
+  };
+
   return (
     <>
       <div className="w-full flex items-center justify-center gap-5 my-8">
         <input
           type="text"
           value={teamId}
+          onKeyDown={handleKeyPress}
           onChange={(e) => setTeamId(e.target.value)}
           placeholder="Enter team Id"
           className="px-3 py-2 border border-gray-300 rounded-md"
