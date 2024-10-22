@@ -103,7 +103,7 @@ export default function Home() {
             <div className="mx-2">{`${currentPage} / ${totalPages}`}</div>
             <button
               onClick={handleNextPage}
-              disabled={currentPage == totalPages}
+              disabled={currentPage === totalPages}
               className="px-3 py-1 bg-gray-300 rounded-md border border-gray-500"
             >
               Next

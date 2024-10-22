@@ -18,7 +18,7 @@ export default function Team() {
       );
       setTeam(res.data);
     } catch (error) {
-      if (error.status == 404) {
+      if (error.status === 404) {
         toast.info("No team found! Enter a valid team Id");
         return;
       }
