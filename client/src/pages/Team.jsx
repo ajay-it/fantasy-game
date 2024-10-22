@@ -2,10 +2,12 @@ import axios from "axios";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import PlayerCard from "../components/PlayerCard";
+import Loader from "../components/Loader";
 
 export default function Team() {
   const [teamId, setTeamId] = useState("");
   const [team, setTeam] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const searchTeam = async () => {
     if (teamId.trim().length === 0) {
@@ -13,6 +15,7 @@ export default function Team() {
       return;
     }
     try {
+      setIsLoading(true);
       const res = await axios.get(
         `${process.env.REACT_APP_API_URL}/team/get/${teamId}`
       );
@@ -24,6 +27,8 @@ export default function Team() {
       }
       console.log(error);
       toast.error("Error fetching team");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -47,26 +52,32 @@ export default function Team() {
         <button
           onClick={searchTeam}
           type="button"
-          className="text-white bg-blue-700 px-4 py-2 rounded-lg"
+          className="text-white bg-blue-600 transition-all hover:bg-blue-700 px-4 py-2 rounded-lg"
         >
           Search Team
         </button>
       </div>
-      <div className="flex flex-col items-center my-8 w-full">
-        {team.players && (
-          <>
-            <h1 className="font-semibold text-3xl">Team Name : {team.name}</h1>
-            <h1 className="font-semibold text-lg mt-2">
-              Team Points : {team.totalPoints}
-            </h1>
-          </>
-        )}
-        <div className="grid grid-cols-3 gap-3 w-4/5 mt-6">
-          {team.players?.map((player) => (
-            <PlayerCard key={player?.id} player={player} />
-          ))}
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div className="flex flex-col items-center my-8 w-full">
+          {team.players && (
+            <>
+              <h1 className="font-semibold text-3xl">
+                Team Name : {team.name}
+              </h1>
+              <h1 className="font-semibold text-lg mt-2">
+                Team Points : {team.totalPoints}
+              </h1>
+            </>
+          )}
+          <div className="grid grid-cols-3 gap-3 w-4/5 mt-6">
+            {team.players?.map((player) => (
+              <PlayerCard key={player?.id} player={player} />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 }

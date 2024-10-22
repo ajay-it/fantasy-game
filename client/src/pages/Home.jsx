@@ -3,6 +3,7 @@ import PlayerCard from "../components/PlayerCard";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import Loader from "../components/Loader";
 
 export default function Home() {
   const [players, setPlayers] = useState([]);
@@ -10,6 +11,8 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [teamName, setTeamName] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [btnLoading, setBtnLoading] = useState(false);
   const limit = 21;
   const navigate = useNavigate();
   const createTeam = async () => {
@@ -25,6 +28,7 @@ export default function Home() {
     }
 
     try {
+      setBtnLoading(true);
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/team/create`,
         {
@@ -37,12 +41,15 @@ export default function Home() {
     } catch (error) {
       console.error(error);
       toast.error("Error creating team.");
+    } finally {
+      setBtnLoading(false);
     }
   };
 
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
+        setIsLoading(true);
         const response = await axios.get(
           `${process.env.REACT_APP_API_URL}/player?limit=${limit}&page=${currentPage}`
         );
@@ -50,6 +57,8 @@ export default function Home() {
         setTotalPages(response.data.totalPages);
       } catch (error) {
         console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -70,45 +79,51 @@ export default function Home() {
 
   return (
     <>
-      <div className="p-4 flex flex-col item">
+      <div className="p-4 flex flex-col">
         <div className="w-3/4">
           <div className="text-3xl flex justify-between items-center w-full bg-white rounded-lg shadow-lg p-4 mb-4 font-semibold">
             <h1>Fantasy Game App</h1>
             <button
               type="button"
               onClick={() => navigate("/team")}
-              className="text-white bg-blue-700 px-4 text-base font-normal py-2 rounded-lg"
+              className="text-white bg-blue-600 transition-all hover:bg-blue-700 px-4 text-base font-normal py-2 rounded-lg"
             >
               Search Team
             </button>
           </div>
-          <div className="grid grid-cols-3 gap-3">
-            {players?.map((player) => (
-              <PlayerCard
-                key={player.id}
-                player={player}
-                teamPlayers={teamPlayers}
-                setTeamPlayers={setTeamPlayers}
-              />
-            ))}
-          </div>
-          <div className="flex justify-center items-center mt-5 w-full">
-            <button
-              onClick={handlePreviousPage}
-              disabled={currentPage === 1}
-              className="px-3 py-1 bg-gray-300 rounded-md border border-gray-500"
-            >
-              Prev
-            </button>
-            <div className="mx-2">{`${currentPage} / ${totalPages}`}</div>
-            <button
-              onClick={handleNextPage}
-              disabled={currentPage === totalPages}
-              className="px-3 py-1 bg-gray-300 rounded-md border border-gray-500"
-            >
-              Next
-            </button>
-          </div>
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <>
+              <div className="grid grid-cols-3 gap-3">
+                {players?.map((player) => (
+                  <PlayerCard
+                    key={player.id}
+                    player={player}
+                    teamPlayers={teamPlayers}
+                    setTeamPlayers={setTeamPlayers}
+                  />
+                ))}
+              </div>
+              <div className="flex justify-center items-center mt-5 w-full">
+                <button
+                  onClick={handlePreviousPage}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1 bg-gray-300 transition-all hover:bg-gray-400 rounded-md border border-gray-500"
+                >
+                  Prev
+                </button>
+                <div className="mx-2">{`${currentPage} / ${totalPages}`}</div>
+                <button
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1 bg-gray-300 transition-all hover:bg-gray-400 rounded-md border border-gray-500"
+                >
+                  Next
+                </button>
+              </div>
+            </>
+          )}
         </div>
         <div className="w-[23%] px-2 m text-center bg-white rounded-lg shadow-lg h-full fixed flex flex-col items-center justify-between right-4 top-4 mb-2 py-2 gap-y-2">
           <div className=" flex flex-col overflow-y-auto p-2">
@@ -134,9 +149,9 @@ export default function Home() {
             <button
               onClick={createTeam}
               type="button"
-              className="w-full text-white bg-blue-700 px-4 py-2 mb-5 rounded-lg"
+              className="w-full text-white bg-blue-600 transition-all hover:bg-blue-700 px-4 py-2 text-lg mb-5 rounded-lg"
             >
-              Create Team
+              {btnLoading ? <Loader btnLoader={true} /> : "Create Team"}
             </button>
           </div>
         </div>
