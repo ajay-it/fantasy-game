@@ -4,6 +4,6 @@ import { createTeam, getTeam } from "../controllers/teams.controller.js";
 const router = express.Router();
 
 router.post("/create", createTeam);
-router.get("/:id", getTeam);
+router.get("/get/:teamId", getTeam);
 
 export default router;

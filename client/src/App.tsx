@@ -1,14 +1,19 @@
-import React from "react";
-import logo from "./logo.svg";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Home from "./pages/Home";
+import Team from "./pages/Team";
 
 function App() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <h1 className="text-4xl font-bold text-purple-500">
-        TailwindCSS with TypeScript works!
-      </h1>
-    </div>
+    <BrowserRouter>
+      <ToastContainer position="top-right" pauseOnHover={false} />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/team" element={<Team />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
